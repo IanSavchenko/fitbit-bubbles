@@ -1,0 +1,18 @@
+<svg id="root">
+  <rect id="background">
+      <use href="#bubble_sym">
+      </use>
+
+      <use href="#bubble_sym">
+      </use>
+
+      <use href="#bubble_sym">
+      </use>
+
+      <use href="#bubble_sym">
+      </use>
+
+      <use href="#bubble_sym">
+      </use>
+  </rect>
+</svg>

@@ -1,0 +1,39 @@
+{
+  "name": "fitbit-bubbles",
+  "version": "0.1.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "@fitbit/sdk": "~4.1.0",
+    "@fitbit/sdk-cli": "^1.7.1",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/parser": "^2.22.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-ban": "^1.4.0",
+    "fitbit-sdk-types": "^4.3.5",
+    "jest": "^25.1.0"
+  },
+  "fitbit": {
+    "appUUID": "099ca12c-5269-44cb-a19d-d164fa4ab24c",
+    "appType": "app",
+    "appDisplayName": "Bubbles",
+    "iconFile": "resources/icon.png",
+    "wipeColor": "#ffffff",
+    "requestedPermissions": [],
+    "buildTargets": [
+      "higgs",
+      "meson",
+      "gemini",
+      "mira"
+    ],
+    "i18n": {},
+    "defaultLanguage": "en-US"
+  },
+  "scripts": {
+    "build": "fitbit-build",
+    "debug": "fitbit",
+    "lint": "eslint --ext .js --ext .ts --ignore-path .eslintignore --fix ./",
+    "test": "jest"
+  },
+  "dependencies": {}
+}
