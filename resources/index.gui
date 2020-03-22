@@ -14,5 +14,8 @@
 
       <use href="#bubble_sym">
       </use>
+
+      <use href="#popup_sym">
+      </use>
   </rect>
 </svg>

@@ -1,3 +1,4 @@
+import { Popup } from './popup';
 
 export class BabyLock {
     _prevClick: number;
@@ -40,13 +41,15 @@ export class BabyLock {
         }
 
         const now = Date.now();
-        if (this._prevClick && now - this._prevClick < 200) {
+        if (this._prevClick && now - this._prevClick < 300) {
             // let back work as it is
             return false;
         }
 
-        if (this._prevClick && now - this._prevClick < 1000) {
-            // show help message
+        if (this._prevClick && now - this._prevClick < 1200) {
+            Popup.instance.show(
+                'Baby Lock Enabled', 
+                'Double-click back button to exit.');
         }
 
         this._prevClick = now;

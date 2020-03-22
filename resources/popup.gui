@@ -1,0 +1,28 @@
+<svg>
+  <defs>
+    <symbol id="popup_sym">
+        <svg class="popup" display="none" layer="999">
+
+            <!-- Black background -->
+            <rect class="full-size" fill="fb-black" />
+
+            <!-- Title and text -->
+            <use id="dialog" href="#mixed-text-center-mid" class="dialog-mixed-text" fill="fb-white">
+                <set href="#top-padding" attributeName="display" to="none" />
+                <set href="#header/text" attributeName="text-buffer" to="Header Text" />
+                <set href="#header/text" attributeName="text-length" to="128" />
+                <set href="#header/text" attributeName="fill" to="fb-magenta"/>
+                <set href="#copy/text" attributeName="text-buffer" to="Message Text" />
+                <set href="#copy/text" attributeName="text-length" to="128" />
+                <set href="#bottom-padding" attributeName="display" to="none" />
+            </use>
+
+            <use id="btn" class="dialog-half-button-left" href="#square-button-neutral" width="100%">
+                <set href="#text" attributeName="text-buffer" to="Button Text" />
+                <set href="#text" attributeName="text-length" to="128" />
+                <set href="#text" attributeName="text-anchor" to="middle" />
+            </use>
+        </svg>
+    </symbol>
+  </defs>
+</svg>
