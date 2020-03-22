@@ -11,8 +11,9 @@ export interface IRenderContext {
 
 export type IRenderFunction = (ctx: IRenderContext) => void;
 
-const BUBBLE_POP_SCALE = 0.7;
-const BUBBLE_SHOW_SCALE_BASE = 0.2;
+const BUBBLE_POP_SCALE = 0.8;
+const BUBBLE_SHOW_SCALE_BASE = 0.3;
+const BUBBLE_SHOW_SCALE_RANDOM = 0.4;
 const BUBBLE_POP_SCALE_DIFF = 0.3;
 
 function _bringBubbleOnTop(bubble: Bubble, ctx: IRenderContext) {
@@ -27,7 +28,7 @@ function _bringBubbleOnTop(bubble: Bubble, ctx: IRenderContext) {
 function _showBubble(bubble: Bubble, ctx: IRenderContext) {
     _bringBubbleOnTop(bubble, ctx);
 
-    bubble.scale = BUBBLE_SHOW_SCALE_BASE + Math.random() * 0.4;
+    bubble.scale = BUBBLE_SHOW_SCALE_BASE + Math.random() * BUBBLE_SHOW_SCALE_RANDOM;
 
     let pos = ctx.positionGenerator.getNext();
     bubble.cx = pos.x;
