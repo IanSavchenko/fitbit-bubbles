@@ -51,11 +51,6 @@ export class Bubble {
       return this._isPopping;
     }
     public set isPopping(v: boolean) {
-      // if (!this._isPopping && v) {
-      //   this.scale += 0.5;
-      //   this.opacity = 0.5;
-      // }
-
       this._isPopping = v;
       if (v) {
         this.popScale = this.scale;

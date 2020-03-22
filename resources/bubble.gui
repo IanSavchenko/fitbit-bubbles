@@ -9,8 +9,7 @@
                   arc-width="3" start-angle="0" sweep-angle="360" />      
               <circle id="background" 
                 cx="50%" cy="50%" 
-                r="80" 
-                fill="red"
+                r="80"
                 pointer-events="visible">
               </circle>
             </g>
