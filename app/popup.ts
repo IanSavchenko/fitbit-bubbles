@@ -1,7 +1,6 @@
 import document from 'document';
 
 export class Popup {
-
     private _element: GraphicsElement;
     private _headerElement : TextAreaElement;
     private _messageElement : TextAreaElement;
@@ -38,12 +37,18 @@ export class Popup {
 
         return Popup._instance;
     }
+
+    private _onCloseFunc: Function;
     
-    show(header: string, text: string = '', btnText: string = '') {
-        // @ts-ignore
+    show(header: string, text: string = '', btnText: string = '', onCloseFunc: Function = undefined) {
+        if (this._onCloseFunc) {
+            // for case when a new popup is opened before previous closed
+            this._onCloseFunc();
+        }
+
+        this._onCloseFunc = onCloseFunc;
+
         this._headerElement.text = header; 
-        this._headerElement.textOverflow
-        // @ts-ignore
         this._messageElement.text = text;
         this._btnElement.text = btnText || 'Ok';
 
@@ -52,5 +57,10 @@ export class Popup {
 
     private _onClick() {
         this._element.style.display = 'none';
+
+        if (this._onCloseFunc) {
+            this._onCloseFunc();
+            this._onCloseFunc = undefined;
+        }
     }
 }
