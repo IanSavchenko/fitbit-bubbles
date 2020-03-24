@@ -1,16 +1,27 @@
-.defaultText {
-  font-size: 32;
-  font-family: System-Regular;
-  font-weight: regular;
-  text-length: 32;
-}
-
 #background {
   width: 100%;
   height: 100%;
-  fill: black;
+  fill: fb-black;
 }
 
-.my-circle {
-  opacity: 0.1;
+.scoreboard-text {
+  layer: "100";
+  y: "100%-20";
+  text-length: "32";
+  font-family: "System-Regular"; 
+  fill: "fb-white";
+  font-size: "20";
+  font-weight: "bold";
+}
+
+#score-text {
+  x: "5%";
+  text-anchor: "start";
+  text: "(Score)";
+}
+
+#time-text {
+  x: "95%";
+  text-anchor: "end";
+  text: "(Score)";
 }

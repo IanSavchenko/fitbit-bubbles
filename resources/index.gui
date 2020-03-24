@@ -17,5 +17,13 @@
 
       <use href="#popup_sym">
       </use>
+
+      <text id="score-text"
+        class="scoreboard-text">
+      </text>
+      
+      <text id="time-text"
+        class="scoreboard-text">
+      </text>
   </rect>
 </svg>

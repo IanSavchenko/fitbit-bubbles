@@ -8,6 +8,8 @@ import {vibration} from 'haptics';
 import { Renderer } from './renderer';
 import { BabyLock } from './baby-lock';
 import document from 'document';
+import { Scoreboard } from './scoreboard';
+import { Popup } from './popup';
 
 function _setupBabyLock() {
   BabyLock.instance.enable();
@@ -31,15 +33,37 @@ function _addVibrateOnPop(bubbles: Array<Bubble>) {
   }
 }
 
+function _addPointsOnPop(bubbles: Array<Bubble>, scoreboard: Scoreboard) {
+  for(let bubble of bubbles) {
+    bubble.onPop.push(function({isUserInitiated}) {
+      if(isUserInitiated) {
+        scoreboard.addBubble();
+      }
+  });
+  }
+}
+
 function _setupGame() {
   const bubbles = createBubbles();
   _addVibrateOnPop(bubbles);
+
+  const scoreboard = new Scoreboard();
+  _addPointsOnPop(bubbles, scoreboard);
+  scoreboard.onGameOver.push(function() {
+    Popup.instance.show(
+      'Game Over', 
+      `Your score is ${scoreboard.score}.`, 
+      'Try again', function() {
+        scoreboard.reset();
+    });
+  });
   
   const screenSize = getScreenSize();
   const positionGenerator = new PositionGenerator(screenSize, bubbles);
   const renderer = new Renderer(bubbles, screenSize, positionGenerator, render);
 
   renderer.start();
+  scoreboard.reset();
 }
 
 function main() {
