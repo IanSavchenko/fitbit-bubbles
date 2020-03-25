@@ -1,15 +1,15 @@
-import { getScreenSize } from './screen-size';
+import {getScreenSize} from './screen-size';
 import {display} from 'display';
-import { PositionGenerator } from './position-generator';
-import { render } from './render';
-import { createBubbles } from './bubbles-factory';
-import { Bubble } from './bubble';
+import {PositionGenerator} from './position-generator';
+import {render} from './render';
+import {createBubbles} from './bubbles-factory';
+import {Bubble} from './bubble';
 import {vibration} from 'haptics';
-import { Renderer } from './renderer';
-import { BabyLock } from './baby-lock';
+import {Renderer} from './renderer';
+import {BabyLock} from './baby-lock';
 import document from 'document';
-import { Scoreboard } from './scoreboard';
-import { Popup } from './popup';
+import {Scoreboard} from './scoreboard';
+import {Popup} from './popup';
 
 function _setupBabyLock() {
   BabyLock.instance.enable();
@@ -18,28 +18,28 @@ function _setupBabyLock() {
     if (e.key === 'back' && BabyLock.instance.ignoreExitOnClick()) {
       e.preventDefault();
     }
-  }
+  };
 
   document.onkeypress = onKeyPress;
 }
 
 function _addVibrateOnPop(bubbles: Array<Bubble>) {
-  for(let bubble of bubbles) {
+  for(const bubble of bubbles) {
     bubble.onPop.push(function({isUserInitiated}) {
       if(isUserInitiated) {
         vibration.start('bump');
       }
-  });
+    });
   }
 }
 
 function _addPointsOnPop(bubbles: Array<Bubble>, scoreboard: Scoreboard) {
-  for(let bubble of bubbles) {
+  for(const bubble of bubbles) {
     bubble.onPop.push(function({isUserInitiated}) {
       if(isUserInitiated) {
         scoreboard.addBubble();
       }
-  });
+    });
   }
 }
 
@@ -55,7 +55,7 @@ function _setupGame() {
       `Your score is ${scoreboard.score}.`, 
       'Try again', function() {
         scoreboard.reset();
-    });
+      });
   });
   
   const screenSize = getScreenSize();

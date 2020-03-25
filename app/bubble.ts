@@ -1,5 +1,5 @@
 import {BubbleColors, colorToColorsSet} from './bubble-colors';
-import { getScreenSize } from './screen-size';
+import {getScreenSize} from './screen-size';
 
 const _screenSize = getScreenSize();
 
@@ -47,7 +47,7 @@ export class Bubble {
       return this._state;
     }
 
-    private _scale: number = 1;
+    private _scale = 1;
     get scale(): number {
       return this._scale;
     }
@@ -55,16 +55,16 @@ export class Bubble {
       this._scale = val;
     }
 
-    private _popScale : number;
-    get popScale() : number {
+    private _popScale: number;
+    get popScale(): number {
       return this._popScale;
     }
     
-    private _opacity : number = 1;
-    public get opacity() : number {
+    private _opacity = 1;
+    public get opacity(): number {
       return this._opacity;
     }
-    public set opacity(v : number) {
+    public set opacity(v: number) {
       if (v < 0) {
         v = 0;
       }
@@ -76,7 +76,7 @@ export class Bubble {
       this._opacity = v;
     }
 
-    private _cx: number = 0;
+    private _cx = 0;
     public get cx(): number {
       return this._cx;
     }
@@ -84,7 +84,7 @@ export class Bubble {
       this._cx = v;
     }
     
-    private _cy: number = 0;
+    private _cy = 0;
     public get cy(): number {
       return this._cy;
     }
@@ -92,11 +92,11 @@ export class Bubble {
       this._cy = v;
     }
 
-    private _z : number = 0;
-    public get z() : number {
+    private _z = 0;
+    public get z(): number {
       return this._z;
     }
-    public set z(v : number) {
+    public set z(v: number) {
       if (v < 0) {
         v = 0;
       }
@@ -106,12 +106,12 @@ export class Bubble {
       this._element.layer = v;
     }
     
-    public get actualRadius() : number {
+    public get actualRadius(): number {
       return this._diameter * this.scale * 0.5;
     }
 
-    private _onPop : Array<Function> = [];  
-    public get onPop() : Array<Function> {
+    private _onPop: Array<Function> = [];  
+    public get onPop(): Array<Function> {
       return this._onPop;
     }
 
@@ -146,7 +146,7 @@ export class Bubble {
       this._element.style.display = 'none';
     }
 
-    public pop(isUserInitiated: Boolean = false) {
+    public pop(isUserInitiated = false) {
       if (this._state === BubbleState.Popping) {
         return;
       }
@@ -161,7 +161,7 @@ export class Bubble {
       this._outerRimElement.style.display = 'inline';
       this._popScale = this.scale;
 
-      for(let f of this.onPop) {
+      for(const f of this.onPop) {
         f({isUserInitiated});
       }
     }
