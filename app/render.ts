@@ -1,5 +1,5 @@
-import { getScreenSize, ScreenSize } from './screen-size';
-import {Bubble} from './bubble';
+import { ScreenSize } from './screen-size';
+import {Bubble, BubbleState} from './bubble';
 import { PositionGenerator } from './position-generator';
 
 export interface IRenderContext {
@@ -37,7 +37,7 @@ function _showBubble(bubble: Bubble, ctx: IRenderContext) {
     bubble.show();
 }
 
-function _renderNormalBubble(bubble: Bubble, ctx: IRenderContext) {
+function _updateNormalBubble(bubble: Bubble, ctx: IRenderContext) {
     bubble.scale += 0.00002 * ctx.msDiff;
     if (bubble.scale >= BUBBLE_POP_SCALE) {
       bubble.pop(false);
@@ -53,7 +53,7 @@ function _renderNormalBubble(bubble: Bubble, ctx: IRenderContext) {
     }
 }
 
-function _renderPoppingBubble(bubble: Bubble, ctx: IRenderContext) {
+function _updatePoppingBubble(bubble: Bubble, ctx: IRenderContext) {
     if (bubble.scale < bubble.popScale + BUBBLE_POP_SCALE_DIFF) {
       // upscaling stage
       bubble.scale += 0.002 * ctx.msDiff;
@@ -70,16 +70,19 @@ function _renderPoppingBubble(bubble: Bubble, ctx: IRenderContext) {
 }
 
 function _renderBubble(bubble: Bubble, ctx: IRenderContext) {
-    if (!bubble.isVisible) {
+    switch(bubble.state) {
+      case(BubbleState.Hidden): 
         _showBubble(bubble, ctx);
-        return;
+        break;
+      case(BubbleState.Normal): 
+        _updateNormalBubble(bubble, ctx);
+        break;
+      case(BubbleState.Popping): 
+        _updatePoppingBubble(bubble, ctx);
+        break;
     }
 
-    if (bubble.isPopping) {
-        _renderPoppingBubble(bubble, ctx);
-    } else {
-        _renderNormalBubble(bubble, ctx);
-    }
+    bubble.render();
 }
 
 export function render(ctx: IRenderContext) {

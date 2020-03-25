@@ -1,0 +1,15 @@
+.bubble {
+    display: none;
+}
+
+.bubble-root-group {
+    transform: scale(1);
+}
+
+.bubble-outer-rim {
+    fill: "fb-white";
+    opacity: 0.5;
+    arc-width: 3;
+    start-angle: 0;
+    sweep-angle: 360;
+}

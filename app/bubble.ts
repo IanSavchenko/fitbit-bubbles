@@ -3,29 +3,32 @@ import { getScreenSize } from './screen-size';
 
 const _screenSize = getScreenSize();
 
+export enum BubbleState {
+  Normal,
+  Popping,
+  Hidden,
+}
+
 export class Bubble {
-    element: GraphicsElement;
-    _outerRimElement: ArcElement;
-    _innerRimElement: ArcElement;
-    _backgroundElement: CircleElement;
-    _rootGroup: GroupElement;
-    _diameter: number;
+    private _element: GraphicsElement;
+    private _outerRimElement: ArcElement;
+    private _bodyElement: CircleElement;
+    private _rootGroup: GroupElement;
+    private _diameter: number;
 
     constructor(element: GraphicsElement) {
-      this.element = element;
+      this._element = element;
       this._outerRimElement = element.getElementById('outer-rim') as ArcElement;
-      this._innerRimElement = element.getElementById('inner-rim') as ArcElement;
-      this._backgroundElement = element.getElementById('background') as CircleElement;
+      this._bodyElement = element.getElementById('body') as CircleElement;
       this._rootGroup = element.getElementById('root-group') as GroupElement;
       this._diameter = Math.min(_screenSize.heightPx, _screenSize.widthPx);
 
-      this._backgroundElement.addEventListener('click', () => {
+      this._bodyElement.addEventListener('click', () => {
         this.pop(true);
       });
 
-      this._positionElements();
-      this._updateShadow();
-      this._updateTransform();
+      this._initializeElements();
+      this.render();
     }
 
     private _color: BubbleColors;
@@ -36,25 +39,12 @@ export class Bubble {
       this._color = v;
 
       const colorsSet = colorToColorsSet(v);
-      // this._outerRimElement.style.fill = colorsSet.base;
-      // this._innerRimElement.style.fill = colorsSet.innerRim;
-      this._backgroundElement.style.fill = colorsSet.base;
+      this._bodyElement.style.fill = colorsSet.base;
     }
 
-    private _isVisible: boolean = true;
-    public get isVisible(): boolean {
-      return this._isVisible;
-    }
-    
-    private _isPopping: boolean;
-    public get isPopping(): boolean {
-      return this._isPopping;
-    }
-    public set isPopping(v: boolean) {
-      this._isPopping = v;
-      if (v) {
-        this.popScale = this.scale;
-      }
+    private _state: BubbleState = BubbleState.Hidden;
+    public get state() {
+      return this._state;
     }
 
     private _scale: number = 1;
@@ -63,15 +53,11 @@ export class Bubble {
     }
     set scale(val: number) {
       this._scale = val;
-      this._updateTransform();
     }
 
     private _popScale : number;
     get popScale() : number {
       return this._popScale;
-    }
-    set popScale(v: number) {
-      this._popScale = v;
     }
     
     private _opacity : number = 1;
@@ -88,7 +74,6 @@ export class Bubble {
       }
 
       this._opacity = v;
-      this._updateOpacity();
     }
 
     private _cx: number = 0;
@@ -97,7 +82,6 @@ export class Bubble {
     }
     public set cx(v: number) {
       this._cx = v;
-      this._updateTransform();
     }
     
     private _cy: number = 0;
@@ -106,16 +90,6 @@ export class Bubble {
     }
     public set cy(v: number) {
       this._cy = v;
-      this._updateTransform();
-    }
-
-    private _angle: number = 0;
-    public get angle(): number {
-      return this._angle;
-    }
-    public set angle(v: number) {
-      this._angle = v;
-      this._updateShadow();
     }
 
     private _z : number = 0;
@@ -129,7 +103,7 @@ export class Bubble {
 
       this._z = v;
 
-      this.element.layer = v;
+      this._element.layer = v;
     }
     
     public get actualRadius() : number {
@@ -141,60 +115,75 @@ export class Bubble {
       return this._onPop;
     }
 
-    public renderPosition() : void {
-      if (!this.isVisible) {
-        return;
-      }
-    }
-
     public show() {
-      if (this._isVisible) {
+      if (this._state === BubbleState.Normal) {
         return;
       }
 
-      this.element.style.display = 'inline';
-      this._backgroundElement.style.display = 'inline';
+      if (this._state !== BubbleState.Hidden) {
+        throw new Error('Invalid state transition');
+      }
+
+      this._state = BubbleState.Normal;
+      
+      this._element.style.display = 'inline';
+      this._bodyElement.style.display = 'inline';
       this._outerRimElement.style.display = 'none';
-      this._isVisible = true;
-      this.isPopping = false;
       this.opacity = 1;
     }
 
     public hide() {
-      if (!this.isVisible) {
+      if (this._state === BubbleState.Hidden) {
         return;
       }
 
-      this.element.style.display = 'none';
-      this._isVisible = false;
-      this._isPopping = false;
+      if (this._state !== BubbleState.Popping) {
+        throw new Error('Invalid state transition');
+      }
+
+      this._state = BubbleState.Hidden;
+
+      this._element.style.display = 'none';
     }
 
     public pop(isUserInitiated: Boolean = false) {
-      this.isPopping = true;
-      this._backgroundElement.style.display = 'none';
+      if (this._state === BubbleState.Popping) {
+        return;
+      }
+
+      if (this._state !== BubbleState.Normal) {
+        throw new Error('Invalid state transition');
+      }
+
+      this._state = BubbleState.Popping;
+
+      this._bodyElement.style.display = 'none';
       this._outerRimElement.style.display = 'inline';
+      this._popScale = this.scale;
 
       for(let f of this.onPop) {
         f({isUserInitiated});
       }
     }
 
-    private _positionElements() {
+    public render() {
+      this._updatePosAndScale();
+      this._updateOpacity();
+    }
+
+    // does a one-time screen-size-dependent setup
+    private _initializeElements() {
       this._outerRimElement.x = (_screenSize.widthPx - this._diameter) / 2;
       this._outerRimElement.y = (_screenSize.heightPx - this._diameter) / 2;
       this._outerRimElement.width = this._diameter;
       this._outerRimElement.height = this._diameter;
 
-      // this._innerRimElement.width = this._diameter;
-      // this._innerRimElement.height = this._diameter;
-
-      this._backgroundElement.r = this._diameter / 2;
-      this._backgroundElement.cx = _screenSize.widthPx / 2;
-      this._backgroundElement.cy = _screenSize.heightPx / 2;
+      this._bodyElement.r = this._diameter / 2;
+      this._bodyElement.cx = _screenSize.widthPx / 2;
+      this._bodyElement.cy = _screenSize.heightPx / 2;
     }
 
-    private _updateTransform() {
+    private _updatePosAndScale() {
       this._rootGroup.groupTransform.scale.x = this._scale;
       this._rootGroup.groupTransform.scale.y = this._scale;
 
@@ -202,17 +191,7 @@ export class Bubble {
       this._rootGroup.groupTransform.translate.y = Math.floor(this.cy -(_screenSize.heightPx / 2)*this.scale);
     }
 
-    private _updateShadow() {
-      let size = 3;
-      
-      let xDiff = size * Math.sin(this.angle * Math.PI / 180);
-      let yDiff = size * Math.cos(this.angle * Math.PI / 180);
-
-      // this._innerRimElement.x = (_screenSize.widthPx - this._diameter) / 2 + xDiff;
-      // this._innerRimElement.y = (_screenSize.heightPx - this._diameter) / 2 + yDiff;
-    }
-
-    _updateOpacity() {
+    private _updateOpacity() {
       this._rootGroup.style.opacity = this._opacity;
     }
 }
