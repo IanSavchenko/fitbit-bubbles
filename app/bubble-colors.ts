@@ -15,27 +15,27 @@ export function colorToColorsSet(color: BubbleColors): BubbleColorsSet {
   switch(color) {
   case(BubbleColors.Blue):
     return {
-      base: 'blue',
+      base: 'fb-blue',
       innerRim: 'lightcyan'
     };
   case(BubbleColors.Red):
     return {
-      base: 'red',
+      base: 'fb-red',
       innerRim: 'pink'
     };
   case(BubbleColors.Green):
     return {
-      base: 'green',
+      base: 'fb-mint',
       innerRim: 'lightgreen'
     };
   case(BubbleColors.Yellow):
     return {
-      base: 'yellow',
+      base: 'fb-peach',
       innerRim: 'lightyellow'
     };
   case(BubbleColors.Purple):
     return {
-      base: 'purple',
+      base: 'fb-purple',
       innerRim: 'plum'
     };
   default: 
