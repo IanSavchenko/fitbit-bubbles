@@ -40,7 +40,7 @@ export class Popup {
 
     private _onCloseFunc: Function;
     
-    show(header: string, text = '', btnText = '', onCloseFunc: Function = undefined) {
+    show(header: string, text = '', btnText = '', onCloseFunc: Function = undefined): void {
       if (this._onCloseFunc) {
         // for case when a new popup is opened before previous closed
         this._onCloseFunc();
@@ -55,7 +55,7 @@ export class Popup {
       this._element.style.display = 'inline';
     }
 
-    private _onClick() {
+    private _onClick(): void {
       this._element.style.display = 'none';
 
       if (this._onCloseFunc) {

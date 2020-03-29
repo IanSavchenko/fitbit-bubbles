@@ -1,22 +1,36 @@
 import {ScreenSize} from './screen-size';
 import {Bubble, BubbleState} from './bubble';
 import {PositionGenerator} from './position-generator';
+import {SettingsManager} from './settings-manager';
 
 export interface RenderContext {
     screenSize: ScreenSize;
     bubbles: Array<Bubble>;
     positionGenerator: PositionGenerator;
     msDiff: number;
+    settingsManager: SettingsManager;
 }
-
-export type IRenderFunction = (ctx: RenderContext) => void;
 
 const BUBBLE_POP_SCALE = 0.8;
 const BUBBLE_SHOW_SCALE_BASE = 0.3;
 const BUBBLE_SHOW_SCALE_RANDOM = 0.4;
 const BUBBLE_POP_SCALE_DIFF = 0.3;
 
-function _bringBubbleOnTop(bubble: Bubble, ctx: RenderContext) {
+const BUBBLE_MOVING_SHOW_BOX = {
+  left: 0.05,
+  right: 0.05,
+  top: -0.1,
+  bottom: 0.2
+};
+
+const BUBBLE_STATIC_SHOW_BOX = {
+  left: 0.05,
+  right: 0.05,
+  top: 0.05,
+  bottom: 0.05
+};
+
+function _bringBubbleOnTop(bubble: Bubble, ctx: RenderContext): void {
   // lower z of every bubble
   for(const b of ctx.bubbles) {
     b.z -= 1;
@@ -25,27 +39,33 @@ function _bringBubbleOnTop(bubble: Bubble, ctx: RenderContext) {
   bubble.z = ctx.bubbles.length;
 }
 
-function _showBubble(bubble: Bubble, ctx: RenderContext) {
+function _showBubble(bubble: Bubble, ctx: RenderContext): void {
   _bringBubbleOnTop(bubble, ctx);
 
   bubble.scale = BUBBLE_SHOW_SCALE_BASE + Math.random() * BUBBLE_SHOW_SCALE_RANDOM;
 
-  const pos = ctx.positionGenerator.getNext();
+  const box = ctx.settingsManager.data.bubblesFallingEnabled 
+    ? BUBBLE_MOVING_SHOW_BOX 
+    : BUBBLE_STATIC_SHOW_BOX;
+
+  const pos = ctx.positionGenerator.getNext(box);
   bubble.cx = pos.x;
   bubble.cy = pos.y;
 
   bubble.show();
 }
 
-function _updateNormalBubble(bubble: Bubble, ctx: RenderContext) {
+function _updateNormalBubble(bubble: Bubble, ctx: RenderContext): void {
   bubble.scale += 0.00002 * ctx.msDiff;
   if (bubble.scale >= BUBBLE_POP_SCALE) {
     bubble.pop(false);
     return;
   }
 
-  // move bubble downwards
-  bubble.cy += 0.02 * ctx.msDiff;
+  if (ctx.settingsManager.data.bubblesFallingEnabled) {
+    // move bubble downwards
+    bubble.cy += 0.02 * ctx.msDiff;
+  }
 
   // move bubble to top when outside of view
   if (bubble.cy > ctx.screenSize.heightPx + bubble.actualRadius) {
@@ -53,7 +73,7 @@ function _updateNormalBubble(bubble: Bubble, ctx: RenderContext) {
   }
 }
 
-function _updatePoppingBubble(bubble: Bubble, ctx: RenderContext) {
+function _updatePoppingBubble(bubble: Bubble, ctx: RenderContext): void {
   if (bubble.scale < bubble.popScale + BUBBLE_POP_SCALE_DIFF) {
     // upscaling stage
     bubble.scale += 0.002 * ctx.msDiff;
@@ -69,7 +89,7 @@ function _updatePoppingBubble(bubble: Bubble, ctx: RenderContext) {
   }
 }
 
-function _renderBubble(bubble: Bubble, ctx: RenderContext) {
+function _renderBubble(bubble: Bubble, ctx: RenderContext): void {
   switch(bubble.state) {
   case(BubbleState.Hidden): 
     _showBubble(bubble, ctx);
@@ -87,7 +107,7 @@ function _renderBubble(bubble: Bubble, ctx: RenderContext) {
   bubble.render();
 }
 
-export function render(ctx: RenderContext) {
+export function render(ctx: RenderContext): void {
   for(const bubble of ctx.bubbles) {
     _renderBubble(bubble, ctx);
   }

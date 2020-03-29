@@ -43,7 +43,7 @@ export class Bubble {
     }
 
     private _state: BubbleState = BubbleState.Hidden;
-    public get state() {
+    public get state(): BubbleState {
       return this._state;
     }
 
@@ -115,7 +115,7 @@ export class Bubble {
       return this._onPop;
     }
 
-    public show() {
+    public show(): void {
       if (this._state === BubbleState.Normal) {
         return;
       }
@@ -132,7 +132,7 @@ export class Bubble {
       this.opacity = 1;
     }
 
-    public hide() {
+    public hide(): void {
       if (this._state === BubbleState.Hidden) {
         return;
       }
@@ -146,7 +146,7 @@ export class Bubble {
       this._element.style.display = 'none';
     }
 
-    public pop(isUserInitiated = false) {
+    public pop(isUserInitiated = false): void {
       if (this._state === BubbleState.Popping) {
         return;
       }
@@ -166,13 +166,13 @@ export class Bubble {
       }
     }
 
-    public render() {
+    public render(): void {
       this._updatePosAndScale();
       this._updateOpacity();
     }
 
     // does a one-time screen-size-dependent setup
-    private _initializeElements() {
+    private _initializeElements(): void {
       this._outerRimElement.x = (_screenSize.widthPx - this._diameter) / 2;
       this._outerRimElement.y = (_screenSize.heightPx - this._diameter) / 2;
       this._outerRimElement.width = this._diameter;
@@ -183,7 +183,7 @@ export class Bubble {
       this._bodyElement.cy = _screenSize.heightPx / 2;
     }
 
-    private _updatePosAndScale() {
+    private _updatePosAndScale(): void {
       this._rootGroup.groupTransform.scale.x = this._scale;
       this._rootGroup.groupTransform.scale.y = this._scale;
 
@@ -191,7 +191,7 @@ export class Bubble {
       this._rootGroup.groupTransform.translate.y = Math.floor(this.cy -(_screenSize.heightPx / 2)*this.scale);
     }
 
-    private _updateOpacity() {
+    private _updateOpacity(): void {
       this._rootGroup.style.opacity = this._opacity;
     }
 }

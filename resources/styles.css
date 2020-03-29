@@ -5,6 +5,7 @@
 }
 
 .scoreboard-text {
+  display: none;
   layer: "100";
   y: "100%-20";
   text-length: "32";

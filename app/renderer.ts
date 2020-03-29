@@ -1,32 +1,32 @@
 import {Bubble} from './bubble';
-import {ScreenSize} from './screen-size';
+import {getScreenSize} from './screen-size';
 import {PositionGenerator} from './position-generator';
-import {RenderContext, IRenderFunction} from './render';
+import {RenderContext, render} from './render';
+import {SettingsManager} from './settings-manager';
 
 export class Renderer {
-    _renderFunction: IRenderFunction;
     _renderContext: RenderContext;
 
-    constructor(
-      bubbles: Array<Bubble>, 
-      screenSize: ScreenSize, 
-      positionGenerator: PositionGenerator, 
-      renderFunction: IRenderFunction) {
-      this._renderFunction = renderFunction;
+    constructor(settingsManager: SettingsManager, bubbles: Array<Bubble>) {
+      const screenSize = getScreenSize();
+      const positionGenerator = new PositionGenerator(screenSize, bubbles);
+
       this._renderContext = {
         bubbles,
-        screenSize,
+        screenSize: getScreenSize(),
         positionGenerator,
-        msDiff: 0
+        msDiff: 0,
+        settingsManager
       };
     }
 
-    start() {
+    public start(): void {
       let prevTimestamp;
-      const rafFunc = (timestamp) => {
+      const rafFunc = (timestamp): void => {
         if (prevTimestamp && timestamp - prevTimestamp < 1000) {
           this._renderContext.msDiff = timestamp - prevTimestamp;
-          this._renderFunction(this._renderContext);
+
+          render(this._renderContext);
         }
 
         prevTimestamp = timestamp;

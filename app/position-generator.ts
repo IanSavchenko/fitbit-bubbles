@@ -6,27 +6,27 @@ export interface ScreenCoordinates {
     y: number;
 }
 
+export interface RelativePaddingBox {
+  left: number;
+  right: number;
+  top: number;
+  bottom: number;
+}
+
 export class PositionGenerator {
     _screenSize: ScreenSize;
     _bubbles: Array<Bubble>;
     
     readonly _maxTries = 5;
-    readonly _acceptedDistance: number; 
-    readonly _box;
+    readonly _acceptedDistance: number;
 
     constructor(screenSize: ScreenSize, bubbles: Array<Bubble>) {
       this._screenSize = screenSize;
       this._bubbles = bubbles;
       this._acceptedDistance = Math.min(screenSize.heightPx, screenSize.widthPx) / 2;
-      this._box = {
-        left: 0.05,
-        right: 0.05,
-        top: -0.1,
-        bottom: 0.2
-      };
     }
 
-    public getNext() {
+    public getNext(box: RelativePaddingBox): ScreenCoordinates {
       const takenPositions = this._bubbles.map(function(b) {
         return {
           x: b.cx,
@@ -39,9 +39,9 @@ export class PositionGenerator {
       while (iteration++ < this._maxTries) {
         const point = {
           x: this._screenSize.widthPx * 
-                    (this._box.left + Math.random() * (1 - this._box.left - this._box.right)),
+                    (box.left + Math.random() * (1 - box.left - box.right)),
           y: this._screenSize.heightPx *
-                    (this._box.top + Math.random() * (1 - this._box.top - this._box.bottom))
+                    (box.top + Math.random() * (1 - box.top - box.bottom))
         };
 
         const distances = takenPositions.map((pos) => {

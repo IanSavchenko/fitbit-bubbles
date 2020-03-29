@@ -1,4 +1,5 @@
 import document from 'document';
+import {Popup} from './popup';
 
 export class Scoreboard {
     private _gameStartTime: number;
@@ -15,10 +16,39 @@ export class Scoreboard {
       this._timeElement = document.getElementById('time-text') as TextElement;
 
       this._updateUi();
+
+      this.onGameOver.push(() => {
+        Popup.instance.show(
+          'Game Over', 
+          `Your score is ${this.score}.`, 
+          'Try again', () => {
+            this.reset();
+          });
+      });
     }
 
+    private _isEnabled = false;
+    public get isEnabled(): boolean {
+      return this._isEnabled;
+    }
+    public set isEnabled(v: boolean) {
+      if (v === this._isEnabled) {
+        return;
+      }
+
+      this._isEnabled = v;
+      this._scoreElement.style.display = v ? 'inline' : 'none';
+      this._timeElement.style.display = v ? 'inline' : 'none';
+
+      if (this._isEnabled) {
+        this.reset();
+      } else {
+        this.stop();
+      }
+    }
+    
     private _onGameOver: Array<Function> = [];
-    public get onGameOver() {
+    public get onGameOver(): Array<Function> {
       return this._onGameOver;
     }
 
@@ -37,18 +67,31 @@ export class Scoreboard {
       return v;
     }
 
-    reset() {
+    public stop(): void {
+      if (this._updateInterval) {
+        clearInterval(this._updateInterval);
+        this._updateInterval = undefined;
+      }
+    }
+
+    public reset(): void {
+      this.stop();
+
+      if (!this.isEnabled) {
+        return;
+      }
+
       this._score = 0;
       this._gameStartTime = Date.now();
 
-      setInterval(this._onTick.bind(this), 200);
+      this._updateInterval = setInterval(this._onTick.bind(this), 200);
     }
 
-    addBubble() {
+    public addBubble(): void {
       this._score++;
     }
 
-    _onTick() {
+    private _onTick(): void {
       if (this.secondsLeft === 0) {
         for (const f of this.onGameOver) {
           f();
@@ -60,7 +103,7 @@ export class Scoreboard {
       this._updateUi();
     }
 
-    _updateUi() {
+    private _updateUi(): void {
       this._scoreElement.text = `Score: ${this.score}`;
       this._timeElement.text = `Time: ${this.secondsLeft}`;
     }

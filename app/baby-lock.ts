@@ -1,13 +1,16 @@
 import {Popup} from './popup';
+import {KeyListener} from './key-listener';
 
 export class BabyLock {
     _prevClick: number;
-    _enabled = false;
+    _isEnabled = false;
 
     private constructor() {
       if (BabyLock._instance) {
         throw new Error('Only one instance should be created');
       }
+
+      KeyListener.instance.addListener(this._onKeyPressed.bind(this));
     }
 
     private static _instance: BabyLock;
@@ -18,25 +21,26 @@ export class BabyLock {
 
       return BabyLock._instance;
     }
+
+    public get isEnabled(): boolean {
+      return this._isEnabled;
+    }
+    public set isEnabled(v: boolean) {
+      this._isEnabled = v;
+    }
+
+    private _onKeyPressed(e: KeyboardEvent): boolean {
+      if (!this.isEnabled) {
+        return;
+      }
+  
+      if (e.key === 'back' && this._ignoreExitOnClick()) {
+        e.preventDefault();
+      }
+    }
     
-    enable() {
-      if (this._enabled) {
-        return;
-      }
-
-      this._enabled = true;
-    }
-
-    disable() {
-      if (!this._enabled) {
-        return;
-      }
-
-      this._enabled = false;
-    }
-
-    ignoreExitOnClick() {
-      if (!this._enabled) {
+    private _ignoreExitOnClick(): boolean {
+      if (!this._isEnabled) {
         return false;
       }
 
