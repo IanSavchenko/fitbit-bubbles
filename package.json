@@ -33,7 +33,7 @@
     "build": "fitbit-build",
     "debug": "fitbit",
     "lint": "eslint --ext .js --ext .ts --ignore-path .eslintignore --fix ./",
-    "test": "jest"
+    "test": "jest --passWithNoTests"
   },
   "dependencies": {}
 }
