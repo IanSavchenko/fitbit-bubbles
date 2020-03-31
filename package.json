@@ -2,7 +2,7 @@
   "name": "fitbit-bubbles",
   "version": "1.0.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "Apache 2.0",
   "devDependencies": {
     "@fitbit/sdk": "~4.1.0",
     "@fitbit/sdk-cli": "^1.7.1",
